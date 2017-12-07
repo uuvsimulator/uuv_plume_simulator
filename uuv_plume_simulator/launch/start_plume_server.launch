@@ -1,0 +1,13 @@
+<launch>
+  <arg name="current_velocity_topic" default="/hydrodynamics/current_velocity"/>
+
+  <group ns="plume">
+    <node name="plume_simulation_server"
+          pkg="uuv_plume_simulator"
+          type="plume_server"
+          output="screen">
+      <remap from="current_vel" to="$(arg current_velocity_topic)"/>
+    </node>
+  </group>
+
+</launch>
