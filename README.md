@@ -66,6 +66,10 @@ around the plume source. To start a current velocity model, run the script
 rosrun uuv_plume_simulator set_current_vel
 ```
 
+To add a particle concentration sensor to the vehicle, check the URDF macro snippets
+found [here](https://github.com/uuvsimulator/uuv_simulator/blob/master/uuv_sensor_plugins/uuv_sensor_plugins_ros/urdf/chemical_concentration.xacro)
+that can be used to add one to the robot description.
+
 ## License
 
 UUV Simulator is open-sourced under the Apache-2.0 license. See the
