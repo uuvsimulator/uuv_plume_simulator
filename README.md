@@ -72,5 +72,5 @@ that can be used to add one to the robot description.
 
 ## License
 
-UUV Simulator is open-sourced under the Apache-2.0 license. See the
+`uuv_plume_simulator` is open-sourced under the Apache-2.0 license. See the
 [LICENSE](LICENSE) file for details.
