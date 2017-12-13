@@ -107,6 +107,18 @@ class PlumeSimulatorServer:
             DeletePlume,
             self.delete_plume)
 
+        # Service callback to set the position of the plume source
+        self._services['set_plume_source_position'] = rospy.Service(
+            'set_plume_source_position',
+            SetPlumeSourcePosition,
+            self.set_plume_source_position)
+
+        # Service callback to get the position of the plume source
+        self._services['get_plume_source_position'] = rospy.Service(
+            'get_plume_source_position',
+            GetPlumeSourcePosition,
+            self.get_plume_source_position)
+
         # Publisher for the plume visual markers
         self._plume_marker_publisher = rospy.Publisher(
             'markers',
@@ -151,6 +163,31 @@ class PlumeSimulatorServer:
             del self._model
         self._model = None
         return DeletePlumeResponse(True)
+
+    def set_plume_source_position(self, request):
+        """
+        Service function callback that sets a new position for the plume
+        source wrt the ENU frame
+        """
+        if self._model is None:
+            return SetPlumeSourcePositionResponse(False)
+        else:
+            self._model.source_pos = \
+                [request.source.x, request.source.y, request.source.z]
+            return SetPlumeSourcePositionResponse(True)
+
+    def get_plume_source_position(self, request):
+        """
+        Service function callback that returns the position wrt to the ENU
+        frame for the plume source.
+        """
+        if self._model is None:
+            return GetPlumeSourcePositionResponse(Point(-1, -1, -1))
+        else:
+            return GetPlumeSourcePositionResponse(
+                Point(self._model.source_pos[0],
+                      self._model.source_pos[1],
+                      self._model.source_pos[2]))
 
     def get_plume_configuration(self, request):
         """
