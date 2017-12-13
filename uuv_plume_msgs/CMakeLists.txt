@@ -15,6 +15,8 @@ add_service_files(
     SetPlumeConfiguration.srv
     GetPlumeConfiguration.srv
     DeletePlume.srv
+    SetPlumeSourcePosition.srv
+    GetPlumeSourcePosition.srv
 )
 
 generate_messages(
@@ -27,4 +29,3 @@ generate_messages(
 catkin_package(
     CATKIN_DEPENDS std_msgs geometry_msgs message_runtime
 )
-
