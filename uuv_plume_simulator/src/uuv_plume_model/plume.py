@@ -90,6 +90,25 @@ class Plume(object):
         """
         return self._source_pos
 
+    @source_pos.setter
+    def source_pos(self, new_pos):
+        assert isinstance(new_pos, list)
+        assert len(new_pos) == 3
+
+        # Reseting the plume
+        self.reset_plume()
+        self._source_pos = new_pos
+
+        # Ensure that the new source position is inside the bounding box
+        self._source_pos[0] = max(self._source_pos[0], self._x_lim[0])
+        self._source_pos[0] = min(self._source_pos[0], self._x_lim[1])
+
+        self._source_pos[1] = max(self._source_pos[1], self._y_lim[0])
+        self._source_pos[1] = min(self._source_pos[1], self._y_lim[1])
+
+        self._source_pos[2] = max(self._source_pos[2], self._z_lim[0])
+        self._source_pos[2] = min(self._source_pos[2], self._z_lim[1])
+
     @property
     def x(self):
         """
@@ -247,6 +266,13 @@ class Plume(object):
             print 'Plume source is outside of limits, ignoring new Z limits'
             return False
 
+    def reset_plume(self):
+        """
+        Reset point cloud and time of creating vectors.
+        """
+        self._pnts = None
+        self._time_creation = None
+
     def get_contraints_filter(self):
         """
         Return a binary vector of N elements, N being current number of
@@ -297,16 +323,20 @@ class Plume(object):
         the plume's particles and one channel containing the time of creation
         for each particle.
         """
-        if self._pnts is None:
+        if self._pnts is None or self._time_creation is None:
             return None
 
         pc = PointCloud()
         pc.header.stamp = rospy.Time.now()
         pc.header.frame_id = 'world'
+        if self._pnts is None:
+            return None
         pc.points = [Point32(x, y, z) for x, y, z in zip(self.x, self.y, self.z)]
 
         channel = ChannelFloat32()
         channel.name = 'time_creation'
+        if self._time_creation is None:
+            return None
         channel.values = self._time_creation.tolist()
 
         pc.channels.append(channel)
