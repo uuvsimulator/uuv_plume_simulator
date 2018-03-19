@@ -304,7 +304,8 @@ class PlumeSimulatorServer:
                 request.stability_param,
                 [request.source.x, request.source.y, request.source.z],
                 request.n_points,
-                rospy.get_time())
+                rospy.get_time(),
+                request.max_particules_per_iter)
 
             self._model.set_x_lim(request.x_min, request.x_max)
             self._model.set_y_lim(request.y_min, request.y_max)

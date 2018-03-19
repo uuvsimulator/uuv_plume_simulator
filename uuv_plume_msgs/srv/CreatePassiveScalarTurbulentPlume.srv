@@ -18,6 +18,7 @@ geometry_msgs/Point source
 float64 buoyancy_flux
 float64 stability_param
 int32 n_points
+int32 max_particules_per_iter
 float64 x_min
 float64 x_max
 float64 y_min
