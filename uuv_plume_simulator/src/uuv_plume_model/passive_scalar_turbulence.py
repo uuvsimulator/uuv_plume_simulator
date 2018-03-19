@@ -55,7 +55,8 @@ class PlumePassiveScalarTurbulence(Plume):
     LABEL = 'passive_scalar_turbulence'
 
     def __init__(self, turbulent_diffusion_coefficients, buoyancy_flux,
-                 stability_param, source_pos, n_points, start_time):
+                 stability_param, source_pos, n_points, start_time,
+                 max_particles_per_iter=10):
         """
         Passive scalar turbulent plume model constructor.
 
@@ -89,7 +90,7 @@ class PlumePassiveScalarTurbulence(Plume):
 
         self._pnts = None
         self._vel_turbulent_diffusion = None
-        self._max_particles_per_iter = 10
+        self._max_particles_per_iter = max(1, max_particles_per_iter)
 
         self.create_particles()
 
