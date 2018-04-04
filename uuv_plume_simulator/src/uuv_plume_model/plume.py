@@ -171,6 +171,13 @@ class Plume(object):
         """
         return self._n_points
 
+    @property
+    def num_particles(self):
+        if self._pnts is None:
+            return 0
+        else:
+            return self._pnts.shape[0]    
+
     def set_n_points(self, n_points):
         """
         Set the maximum number of points to be created by the plume model.
