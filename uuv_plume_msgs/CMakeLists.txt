@@ -17,6 +17,7 @@ add_service_files(
     DeletePlume.srv
     SetPlumeSourcePosition.srv
     GetPlumeSourcePosition.srv
+    GetNumParticles.srv
 )
 
 generate_messages(

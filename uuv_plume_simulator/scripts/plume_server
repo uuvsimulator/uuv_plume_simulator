@@ -119,6 +119,11 @@ class PlumeSimulatorServer:
             GetPlumeSourcePosition,
             self.get_plume_source_position)
 
+        self._services['get_num_particles'] = rospy.Service(
+            'get_num_particles',
+            GetNumParticles,
+            self.get_num_particles)
+
         # Publisher for the plume visual markers
         self._plume_marker_publisher = rospy.Publisher(
             'markers',
@@ -175,6 +180,15 @@ class PlumeSimulatorServer:
             self._model.source_pos = \
                 [request.source.x, request.source.y, request.source.z]
             return SetPlumeSourcePositionResponse(True)
+
+    def get_num_particles(self, request):
+        """
+        Return the number of particles currently active.
+        """
+        if self._model is None:
+            return GetNumParticlesResponse(0)
+        else:
+            return GetNumParticlesResponse(int(self._model.num_particles))            
 
     def get_plume_source_position(self, request):
         """

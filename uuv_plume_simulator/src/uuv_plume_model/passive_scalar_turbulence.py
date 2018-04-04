@@ -156,13 +156,13 @@ class PlumePassiveScalarTurbulence(Plume):
         if self._pnts is None:
             self._pnts = new_pnts
             self._vel_turbulent_diffusion = np.zeros(new_pnts.shape)
-            self._time_creation = self._t * np.ones(new_pnts.shape[0])
+            self._time_creation = (self._t - self._start_time) * np.ones(new_pnts.shape[0])
         else:
             self._pnts = np.vstack((self._pnts, new_pnts))
             self._vel_turbulent_diffusion = np.vstack(
                 (self._vel_turbulent_diffusion, np.zeros(new_pnts.shape)))
             self._time_creation = np.hstack(
-                (self._time_creation, self._t * np.ones(new_pnts.shape[0])))
+                (self._time_creation, (self._t - self._start_time) * np.ones(new_pnts.shape[0])))
 
     def compute_plume_rise(self, t):
         """
