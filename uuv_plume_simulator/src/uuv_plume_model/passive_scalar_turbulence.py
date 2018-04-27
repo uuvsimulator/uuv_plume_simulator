@@ -56,7 +56,7 @@ class PlumePassiveScalarTurbulence(Plume):
 
     def __init__(self, turbulent_diffusion_coefficients, buoyancy_flux,
                  stability_param, source_pos, n_points, start_time,
-                 max_particles_per_iter=10):
+                 max_particles_per_iter=10, max_life_time=-1):
         """
         Passive scalar turbulent plume model constructor.
 
@@ -91,8 +91,9 @@ class PlumePassiveScalarTurbulence(Plume):
         self._pnts = None
         self._vel_turbulent_diffusion = None
         self._max_particles_per_iter = max(1, max_particles_per_iter)
+        self._max_life_time = max_life_time
 
-        self.create_particles()
+        self.create_particles(0)
 
         self._buoyancy_flux = buoyancy_flux
 
@@ -123,7 +124,7 @@ class PlumePassiveScalarTurbulence(Plume):
             print 'Number of particles per iteration must be greater than zero'
             return False
 
-    def create_particles(self):
+    def create_particles(self, t):
         """
         Create random number of particles for one iteration up to the given
         maximum limit and remove all particles that have left the plume's
@@ -134,6 +135,8 @@ class PlumePassiveScalarTurbulence(Plume):
         if self._pnts is not None:
             # Remove the particles that are outside of the limits
             p_filter = self.get_contraints_filter()
+            if self._max_life_time > 0:
+                p_filter = np.logical_and(p_filter, t - self._time_creation < self._max_life_time)
             if np.sum(p_filter) > 0:
                 # Filter out the points outside of the limit box
                 self._pnts = self._pnts[np.nonzero(p_filter)[0], :]
@@ -218,7 +221,7 @@ class PlumePassiveScalarTurbulence(Plume):
             print 'Time step must be greater than zero'
             return False
 
-        self.create_particles()
+        self.create_particles(t)
         # Update turbulent diffusion velocity component
         for i in range(3):
             # Calculate particle velocity due to turbulent diffusion

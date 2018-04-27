@@ -167,6 +167,7 @@ class PlumeSimulatorServer:
         if self._model is not None:
             del self._model
         self._model = None
+        rospy.loginfo('Plume deleted')
         return DeletePlumeResponse(True)
 
     def set_plume_source_position(self, request):
@@ -175,8 +176,12 @@ class PlumeSimulatorServer:
         source wrt the ENU frame
         """
         if self._model is None:
+            rospy.logwarn('No plume model has been created')
             return SetPlumeSourcePositionResponse(False)
         else:
+            rospy.loginfo('Plume source position set to:')
+            rospy.loginfo('\t(X, Y, Z) [m] wrt the ENU frame: (%.2f, %.2f, %.2f)' % (request.source.x, request.source.y, request.source.z))
+        
             self._model.source_pos = \
                 [request.source.x, request.source.y, request.source.z]
             return SetPlumeSourcePositionResponse(True)
@@ -186,8 +191,10 @@ class PlumeSimulatorServer:
         Return the number of particles currently active.
         """
         if self._model is None:
+            rospy.logwarn('No plume model has been created')
             return GetNumParticlesResponse(0)
         else:
+            rospy.loginfo('Number of plume particles requested: %d' % self._model.num_particles)
             return GetNumParticlesResponse(int(self._model.num_particles))            
 
     def get_plume_source_position(self, request):
@@ -196,8 +203,12 @@ class PlumeSimulatorServer:
         frame for the plume source.
         """
         if self._model is None:
+            rospy.logwarn('No plume model has been created')
             return GetPlumeSourcePositionResponse(Point(-1, -1, -1))
         else:
+            rospy.loginfo('Current plume source position:')
+            rospy.loginfo('\t(X, Y, Z) [m] wrt the ENU frame: (%.2f, %.2f, %.2f)' % (self._model.source_pos[0], self._model.source_pos[1], self._model.source_pos[2]))
+        
             return GetPlumeSourcePositionResponse(
                 Point(self._model.source_pos[0],
                       self._model.source_pos[1],
@@ -209,6 +220,7 @@ class PlumeSimulatorServer:
         the current plume model being used.
         """
         if self._model is None:
+            rospy.logwarn('No plume model has been created')
             return GetPlumeConfigurationResponse(
                 '',
                 0,
@@ -236,22 +248,23 @@ class PlumeSimulatorServer:
         Service function callback to set general plume configuration parameters.
         """
         if self._model is None:
-            print 'No plume model has been created'
+            rospy.logwarn('No plume model has been created')
             return SetPlumeConfigurationResponse(False)
         try:
             if not self._model.set_n_points(request.n_points):
                 return SetPlumeConfigurationRequest(False)
 
-            print 'Change in the plume configuration:'
-            print '\t- # particles=', request.n_points
+            rospy.loginfo('Change in the plume configuration:')
+            rospy.loginfo('\t- # particles=%d' % request.n_points)
 
             if request.max_particles_per_iter > 0 and self._model.LABEL == 'passive_scalar_turbulence':
                 if not self._model.set_max_particles_per_iter(request.max_particles_per_iter):
+                    rospy.logerr('Error ocurred while setting the maximum number of particles per iteration, value=%d', int(request.max_particles_per_iter))
                     return SetPlumeConfigurationRequest(False)
-                    print '\t- Max. number of particles per iteration=', request.max_particles_per_iter
+                rospy.loginfo('\t- Max. number of particles per iteration=%d', request.max_particles_per_iter)
             return SetPlumeConfigurationResponse(True)
         except Exception, e:
-            print 'Error setting the plume configuration, message=' + str(e)
+            rospy.logerr('Error setting the plume configuration, message=%s', str(e))
             return SetPlumeConfigurationResponse(False)
 
     def set_plume_limits(self, request):
@@ -259,7 +272,7 @@ class PlumeSimulatorServer:
         Service function callback to set the plume bounding box limits.
         """
         if self._model is None:
-            print 'No plume model has been created'
+            rospy.logwarn('No plume model has been created')
             return SetPlumeLimitsResponse(False)
 
         try:
@@ -268,7 +281,7 @@ class PlumeSimulatorServer:
             self._model.set_z_lim(request.z_min, request.z_max)
             return SetPlumeLimitsResponse(True)
         except Exception, e:
-            print 'Error setting the plume limits, message=' + str(e)
+            rospy.logerr('Error setting the plume limits, message=%s', str(e))
             return SetPlumeLimitsResponse(False)
 
     def create_spheroid_plume(self, request):
@@ -297,9 +310,11 @@ class PlumeSimulatorServer:
             self._model.set_x_lim(request.x_min, request.x_max)
             self._model.set_y_lim(request.y_min, request.y_max)
             self._model.set_z_lim(request.z_min, request.z_max)
+            rospy.loginfo('Spheroid plume created!')
+            rospy.loginfo(request)
             return CreateSpheroidPlumeResponse(True)
         except Exception, e:
-            print 'Error, message=' + str(e)
+            rospy.logerr('Error creating spheroid plume model, message=%s', str(e))
             self._model = None
             return CreateSpheroidPlumeResponse(False)
 
@@ -319,14 +334,17 @@ class PlumeSimulatorServer:
                 [request.source.x, request.source.y, request.source.z],
                 request.n_points,
                 rospy.get_time(),
-                request.max_particules_per_iter)
+                request.max_particules_per_iter,
+                request.max_life_time)
 
             self._model.set_x_lim(request.x_min, request.x_max)
             self._model.set_y_lim(request.y_min, request.y_max)
             self._model.set_z_lim(request.z_min, request.z_max)
+            rospy.loginfo('Passive turbulent plume created!')
+            rospy.loginfo(request)
             return CreatePassiveScalarTurbulentPlumeResponse(True)
         except Exception, e:
-            print 'Error, message=' + str(e)
+            rospy.logerr('Error creating passive turbulent plume model, message=%s', str(e))
             self._model = None
             return CreatePassiveScalarTurbulentPlumeResponse(False)
 
