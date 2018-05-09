@@ -135,6 +135,13 @@ class Plume(object):
         return self._pnts[:, 1]
 
     @property
+    def time_of_creation(self):
+        """Return the time of creation vector."""
+        if self._pnts is None:
+            return None
+        return self._time_creation
+
+    @property
     def y_lim(self):
         """
         Return the lower and upper limit for the bounding box on the Y axis.
@@ -323,6 +330,18 @@ class Plume(object):
 
         self._pnts[:, 2] = np.maximum(self._z_lim[0], self._pnts[:, 2])
         self._pnts[:, 2] = np.minimum(self._z_lim[1], self._pnts[:, 2])
+
+    def set_plume_particles(self, t, x, y, z, time_creation):
+        self._pnts = np.zeros(shape=(len(x), 3))
+        self._time_creation = np.zeros(len(time_creation))
+
+        self._time_creation = np.array(time_creation)
+        self._time_creation -= np.max(time_creation)
+        self._time_creation += t
+
+        self._pnts[:, 0] = np.array(x)
+        self._pnts[:, 1] = np.array(y)
+        self._pnts[:, 2] = np.array(z)
 
     def get_point_cloud_as_msg(self):
         """

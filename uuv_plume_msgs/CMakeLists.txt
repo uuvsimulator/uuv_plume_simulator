@@ -18,6 +18,8 @@ add_service_files(
     SetPlumeSourcePosition.srv
     GetPlumeSourcePosition.srv
     GetNumParticles.srv
+    StorePlumeState.srv
+    LoadPlumeParticles.srv
 )
 
 generate_messages(

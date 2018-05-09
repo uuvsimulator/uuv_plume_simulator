@@ -167,6 +167,20 @@ class PlumePassiveScalarTurbulence(Plume):
             self._time_creation = np.hstack(
                 (self._time_creation, (self._t - self._start_time) * np.ones(new_pnts.shape[0])))
 
+    def set_plume_particles(self, t, x, y, z, time_creation):
+        self._pnts = np.zeros(shape=(len(x), 3))
+        self._time_creation = np.zeros(len(time_creation))
+
+        self._time_creation = np.array(time_creation)
+        self._time_creation -= np.max(time_creation)
+        self._time_creation += t
+
+        self._pnts[:, 0] = np.array(x)
+        self._pnts[:, 1] = np.array(y)
+        self._pnts[:, 2] = np.array(z)
+
+        self._vel_turbulent_diffusion = np.zeros(self._pnts.shape)
+
     def compute_plume_rise(self, t):
         """
         The plume rise equation is used to compute the vertical buoyant
