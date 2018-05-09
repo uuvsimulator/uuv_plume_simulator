@@ -21,6 +21,8 @@ from geometry_msgs.msg import Point, TwistStamped
 from uuv_plume_model import Plume
 import numpy as np
 from uuv_plume_msgs.srv import *
+import os
+import yaml
 
 
 class PlumeSimulatorServer:
@@ -124,6 +126,16 @@ class PlumeSimulatorServer:
             GetNumParticles,
             self.get_num_particles)
 
+        self._services['store_plume_state'] = rospy.Service(
+            'store_plume_state',
+            StorePlumeState,
+            self.store_plume_state)
+
+        self._services['load_plume_particles'] = rospy.Service(
+            'load_plume_particles',
+            LoadPlumeParticles,
+            self.load_plume_particles)
+
         # Publisher for the plume visual markers
         self._plume_marker_publisher = rospy.Publisher(
             'markers',
@@ -142,11 +154,12 @@ class PlumeSimulatorServer:
             TwistStamped,
             self.current_vel_callback)
 
+        self._loading_plume = False
         # Timer called to update both the particle point cloud and visual
         # markers
         self._update_plume_timer = rospy.Timer(
             rospy.Duration(1 / self._update_rate),
-            self.update_plume)
+            self.update_plume)            
 
     def current_vel_callback(self, msg):
         """
@@ -348,6 +361,58 @@ class PlumeSimulatorServer:
             self._model = None
             return CreatePassiveScalarTurbulentPlumeResponse(False)
 
+    def store_plume_state(self, request):
+        rospy.loginfo('Store plume state service called')
+        if self._model is None:
+            rospy.logerr('No plume model available!')
+            return StorePlumeStateResponse(False, '')
+        output_dir = '/tmp'
+        if os.path.isdir(request.output_dir):
+            output_dir = request.output_dir
+        filename = 'plume.yaml'
+        if '.yaml' in request.filename or '.yml' in request.filename:
+            filename = request.filename
+
+        abs_filename = os.path.join(output_dir, filename)
+
+        data = dict(x=self._model.x.flatten().tolist(), 
+                    y=self._model.y.flatten().tolist(), 
+                    z=self._model.z.flatten().tolist(), 
+                    time_creation=self._model.time_of_creation.flatten().tolist())
+
+        with open(abs_filename, 'w') as yaml_file:
+            yaml_file.write(yaml.safe_dump(data))
+
+        rospy.loginfo('Plume particles stored in=%s', abs_filename)
+        return StorePlumeStateResponse(True, abs_filename)
+
+    def load_plume_particles(self, request):
+        rospy.loginfo('Load plume particles service called')
+        if self._model is None:
+            rospy.logerr('No plume model available!')
+            return LoadPlumeParticlesResponse(False)
+
+        if not os.path.isfile(request.plume_file):
+            rospy.logerr('Plume file provided is invalid, filename=%s', request.plume_file)
+            return LoadPlumeParticlesResponse(False)
+        self._loading_plume = True
+        try:
+            with open(request.plume_file, 'r') as plume_file:
+                plume_particles = yaml.load(plume_file)
+            rospy.loginfo('# particles loaded=%d', len(plume_particles['x']))
+            self._model.set_plume_particles(
+                rospy.get_time(),
+                plume_particles['x'],
+                plume_particles['y'],
+                plume_particles['z'],
+                plume_particles['time_creation'])
+        except Exception, e:
+            rospy.logerr('Error while loading plume file, message=%s', str(e))
+            return LoadPlumeParticlesResponse(False)    
+
+        self._loading_plume = False
+        return LoadPlumeParticlesResponse(True)
+
     def update_plume(self, event):
         """
         Callback function for the plume timer which contains the update for
@@ -355,7 +420,7 @@ class PlumeSimulatorServer:
         """
         self._dt = rospy.get_time() - self._t
 
-        if self._dt <= 0.0:
+        if self._dt <= 0.0 or self._loading_plume:
             return True
 
         if self._model is None:
