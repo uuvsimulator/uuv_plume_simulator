@@ -18,6 +18,7 @@ import rospy
 from sensor_msgs.msg import PointCloud
 from visualization_msgs.msg import MarkerArray
 from geometry_msgs.msg import Point, TwistStamped
+from threading import Lock
 from uuv_plume_model import Plume
 import numpy as np
 from uuv_plume_msgs.srv import *
@@ -154,7 +155,7 @@ class PlumeSimulatorServer:
             TwistStamped,
             self.current_vel_callback)
 
-        self._loading_plume = False
+        self._loading_plume = Lock()
         # Timer called to update both the particle point cloud and visual
         # markers
         self._update_plume_timer = rospy.Timer(
@@ -395,7 +396,7 @@ class PlumeSimulatorServer:
         if not os.path.isfile(request.plume_file):
             rospy.logerr('Plume file provided is invalid, filename=%s', request.plume_file)
             return LoadPlumeParticlesResponse(False)
-        self._loading_plume = True
+        self._loading_plume.acquire()
         try:
             with open(request.plume_file, 'r') as plume_file:
                 plume_particles = yaml.load(plume_file)
@@ -410,7 +411,7 @@ class PlumeSimulatorServer:
             rospy.logerr('Error while loading plume file, message=%s', str(e))
             return LoadPlumeParticlesResponse(False)    
 
-        self._loading_plume = False
+        self._loading_plume.release()
         return LoadPlumeParticlesResponse(True)
 
     def update_plume(self, event):
@@ -420,7 +421,8 @@ class PlumeSimulatorServer:
         """
         self._dt = rospy.get_time() - self._t
 
-        if self._dt <= 0.0 or self._loading_plume:
+        self._loading_plume.acquire()
+        if self._dt <= 0.0:
             return True
 
         if self._model is None:
@@ -443,7 +445,7 @@ class PlumeSimulatorServer:
         pc_msg = self._model.get_point_cloud_as_msg()
         if pc_msg is not None:
             self._plume_point_cloud_publisher.publish(pc_msg)
-
+        self._loading_plume.release()
         return True
 
 
