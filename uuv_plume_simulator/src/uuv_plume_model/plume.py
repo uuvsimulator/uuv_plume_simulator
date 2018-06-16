@@ -56,7 +56,7 @@ class Plume(object):
         # Number of points in the point cloud
         self._n_points = n_points
         # Time stamp to be updated at each iteration
-        self._t = start_time
+        self._t = 0.0
         # Time stamp for the creation of this plume model instance
         self._start_time = start_time
         # Time step between updates
@@ -183,7 +183,7 @@ class Plume(object):
         if self._pnts is None:
             return 0
         else:
-            return self._pnts.shape[0]    
+            return self._pnts.shape[0]
 
     def set_n_points(self, n_points):
         """

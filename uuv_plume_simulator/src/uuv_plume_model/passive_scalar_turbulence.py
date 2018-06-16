@@ -133,6 +133,7 @@ class PlumePassiveScalarTurbulence(Plume):
         n_particles = int(self._max_particles_per_iter * np.random.rand())
 
         if self._pnts is not None:
+
             # Remove the particles that are outside of the limits
             p_filter = self.get_contraints_filter()
             if self._max_life_time > 0:
@@ -159,13 +160,13 @@ class PlumePassiveScalarTurbulence(Plume):
         if self._pnts is None:
             self._pnts = new_pnts
             self._vel_turbulent_diffusion = np.zeros(new_pnts.shape)
-            self._time_creation = (self._t - self._start_time) * np.ones(new_pnts.shape[0])
+            self._time_creation = self._t * np.ones(new_pnts.shape[0])
         else:
             self._pnts = np.vstack((self._pnts, new_pnts))
             self._vel_turbulent_diffusion = np.vstack(
                 (self._vel_turbulent_diffusion, np.zeros(new_pnts.shape)))
             self._time_creation = np.hstack(
-                (self._time_creation, (self._t - self._start_time) * np.ones(new_pnts.shape[0])))
+                (self._time_creation, self._t * np.ones(new_pnts.shape[0])))
 
     def set_plume_particles(self, t, x, y, z, time_creation):
         self._pnts = np.zeros(shape=(len(x), 3))
@@ -229,6 +230,7 @@ class PlumePassiveScalarTurbulence(Plume):
         t: float
             Current simulation time stamp.
         """
+        t -= self._start_time
         self._dt = t - self._t
         self._t = t
         if self._dt <= 0.0:
