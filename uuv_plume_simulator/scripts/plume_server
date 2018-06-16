@@ -160,7 +160,7 @@ class PlumeSimulatorServer:
         # markers
         self._update_plume_timer = rospy.Timer(
             rospy.Duration(1 / self._update_rate),
-            self.update_plume)            
+            self.update_plume)
 
     def current_vel_callback(self, msg):
         """
@@ -195,7 +195,7 @@ class PlumeSimulatorServer:
         else:
             rospy.loginfo('Plume source position set to:')
             rospy.loginfo('\t(X, Y, Z) [m] wrt the ENU frame: (%.2f, %.2f, %.2f)' % (request.source.x, request.source.y, request.source.z))
-        
+
             self._model.source_pos = \
                 [request.source.x, request.source.y, request.source.z]
             return SetPlumeSourcePositionResponse(True)
@@ -209,7 +209,7 @@ class PlumeSimulatorServer:
             return GetNumParticlesResponse(0)
         else:
             rospy.loginfo('Number of plume particles requested: %d' % self._model.num_particles)
-            return GetNumParticlesResponse(int(self._model.num_particles))            
+            return GetNumParticlesResponse(int(self._model.num_particles))
 
     def get_plume_source_position(self, request):
         """
@@ -222,7 +222,7 @@ class PlumeSimulatorServer:
         else:
             rospy.loginfo('Current plume source position:')
             rospy.loginfo('\t(X, Y, Z) [m] wrt the ENU frame: (%.2f, %.2f, %.2f)' % (self._model.source_pos[0], self._model.source_pos[1], self._model.source_pos[2]))
-        
+
             return GetPlumeSourcePositionResponse(
                 Point(self._model.source_pos[0],
                       self._model.source_pos[1],
@@ -376,9 +376,9 @@ class PlumeSimulatorServer:
 
         abs_filename = os.path.join(output_dir, filename)
 
-        data = dict(x=self._model.x.flatten().tolist(), 
-                    y=self._model.y.flatten().tolist(), 
-                    z=self._model.z.flatten().tolist(), 
+        data = dict(x=self._model.x.flatten().tolist(),
+                    y=self._model.y.flatten().tolist(),
+                    z=self._model.z.flatten().tolist(),
                     time_creation=self._model.time_of_creation.flatten().tolist())
 
         with open(abs_filename, 'w') as yaml_file:
@@ -409,7 +409,7 @@ class PlumeSimulatorServer:
                 plume_particles['time_creation'])
         except Exception, e:
             rospy.logerr('Error while loading plume file, message=%s', str(e))
-            return LoadPlumeParticlesResponse(False)    
+            return LoadPlumeParticlesResponse(False)
 
         self._loading_plume.release()
         return LoadPlumeParticlesResponse(True)
