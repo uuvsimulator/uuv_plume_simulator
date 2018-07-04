@@ -119,7 +119,9 @@ class CurrentVelocityServer:
                           '\tNoise amplitude: %.2f\n'
                           '\tMu: %.2f' % (req.mean, req.min, req.max,
                                           req.noise, req.mu))
-        except Exception, e:
+        except Exception as e:
+            rospy.logerr('Error while setting the velocity model')
+            rospy.logerr('\tError message=' + str(e))
             return SetCurrentModelResponse(False)
         return SetCurrentModelResponse(True)
 
