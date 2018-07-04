@@ -1,0 +1,45 @@
+<launch>
+    <arg name="diffusion_coef_x" default="0.4"/>
+    <arg name="diffusion_coef_y" default="0.4"/>
+    <arg name="diffusion_coef_z" default="0.1"/>
+    <arg name="source_x" default="-180.0"/>
+    <arg name="source_y" default="0.0"/>
+    <arg name="source_z" default="-30.0"/>
+    <arg name="buoyancy_flux" default="0.1"/>
+    <arg name="stability_param" default="0.001"/>
+    <arg name="n_points" default="150000"/>
+    <arg name="x_min" default="-200"/>
+    <arg name="x_max" default="200.0"/>
+    <arg name="y_min" default="-75"/>
+    <arg name="y_max" default="75"/>
+    <arg name="z_min" default="-60"/>
+    <arg name="z_max" default="0.0"/>
+    <arg name="max_particules_per_iter" default="80"/>
+    <arg name="max_life_time" default="-1"/>
+
+    <node name="set_turbulent_plume"
+          pkg="uuv_gazebo_trondheim"
+          type="set_turbulent_plume">
+        <rosparam subst_value="true">
+            turbulent_diffusion_coefficients:
+                x: $(arg diffusion_coef_x)
+                y: $(arg diffusion_coef_y)
+                z: $(arg diffusion_coef_z)
+            source:
+                x: $(arg source_x)
+                y: $(arg source_y)
+                z: $(arg source_z)
+            buoyancy_flux: $(arg buoyancy_flux)
+            stability_param: $(arg stability_param)
+            n_points: $(arg n_points)
+            max_particules_per_iter: $(arg max_particules_per_iter)
+            x_min: $(arg x_min)
+            x_max: $(arg x_max)
+            y_min: $(arg y_min)
+            y_max: $(arg y_max)
+            z_min: $(arg z_min)
+            z_max: $(arg z_max)
+            max_life_time: $(arg max_life_time)
+        </rosparam>
+    </node>
+</launch>

@@ -1,0 +1,87 @@
+#!/usr/bin/env python
+# Copyright (c) 2016 The UUV Simulator Authors.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import rospy
+import sys
+from geometry_msgs.msg import Vector3, Point
+from uuv_plume_msgs.srv import CreatePassiveScalarTurbulentPlume
+
+
+if __name__ == '__main__':
+    print('Set the parameter for a turbulent plume, namespace=', rospy.get_namespace())
+    rospy.init_node('set_turbulent_plume')
+
+    if rospy.is_shutdown():
+        print('ROS master is not running')
+        sys.exit(-1)
+
+    params = ['turbulent_diffusion_coefficients', 'source', 'buoyancy_flux',
+              'stability_param', 'n_points', 'x_min', 'x_max', 'y_min',
+              'y_max', 'z_min', 'z_max', 'max_particles_per_iter', 'max_life_time']
+
+    for tag in params:
+        if not rospy.has_param('~' + tag):
+            raise rospy.ROSException('Parameter <%s> is missing' % tag)
+
+    tdc = rospy.get_param('~turbulent_diffusion_coefficients')
+    assert isinstance(tdc, dict)
+    assert 'x' in tdc and 'y' in tdc and 'z' in tdc
+
+    source = rospy.get_param('~source')
+    assert isinstance(source, dict)
+    assert 'x' in source and 'y' in source and 'z' in source
+
+    buoyancy_flux = rospy.get_param('~buoyancy_flux')
+    assert isinstance(buoyancy_flux, float)
+    assert buoyancy_flux > 0
+
+    stability_param = rospy.get_param('~stability_param')
+    assert isinstance(stability_param, float)
+    assert stability_param > 0
+
+    n_points = rospy.get_param('~n_points')
+    assert isinstance(n_points, int)
+    assert n_points > 0
+
+    max_particles_per_iter = rospy.get_param('~max_particles_per_iter')
+    assert isinstance(max_particles_per_iter, int)
+    assert max_particles_per_iter > 0
+
+    x_min = rospy.get_param('~x_min')
+    x_max = rospy.get_param('~x_max')
+    assert x_min < x_max
+
+    y_min = rospy.get_param('~y_min')
+    y_max = rospy.get_param('~y_max')
+    assert y_min < y_max
+
+    z_min = rospy.get_param('~z_min')
+    z_max = rospy.get_param('~z_max')
+    assert z_min < z_max
+
+    max_life_time = rospy.get_param('~max_life_time', -1)
+
+    rospy.wait_for_service('/plume/create_passive_scalar_turbulent_plume', 20)
+    set_plume_mode = rospy.ServiceProxy(
+        '/plume/create_passive_scalar_turbulent_plume',
+        CreatePassiveScalarTurbulentPlume)
+
+    if set_plume_mode(Vector3(tdc['x'], tdc['y'], tdc['z']),
+        Point(source['x'], source['y'], source['z']), buoyancy_flux,
+        stability_param, n_points, max_particles_per_iter,
+        x_min, x_max, y_min, y_max, z_min, z_max, max_life_time):
+        print('Turbulent plume model create successfully!')
+    else:
+        print('Error setting the plume model')
