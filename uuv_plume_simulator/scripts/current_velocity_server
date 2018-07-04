@@ -112,6 +112,13 @@ class CurrentVelocityServer:
                 max_value=req.max,
                 noise_amp=req.noise,
                 mu=req.mu)
+            rospy.loginfo('Setting current velocity model [m/s]:\n'
+                          '\tMean: %.2f\n'
+                          '\tMin. value: %.2f\n'
+                          '\tMax. value: %.2f\n'
+                          '\tNoise amplitude: %.2f\n'
+                          '\tMu: %.2f' % (req.mean, req.min, req.max,
+                                          req.noise, req.mu))
         except Exception, e:
             return SetCurrentModelResponse(False)
         return SetCurrentModelResponse(True)
@@ -124,7 +131,16 @@ class CurrentVelocityServer:
                 max_value=req.max,
                 noise_amp=req.noise,
                 mu=req.mu)
-        except Exception, e:
+            rospy.loginfo('Setting horizontal angle model [rad]:\n'
+                          '\tMean: %.2f\n'
+                          '\tMin. value: %.2f\n'
+                          '\tMax. value: %.2f\n'
+                          '\tNoise amplitude: %.2f\n'
+                          '\tMu: %.2f' % (req.mean, req.min, req.max,
+                                          req.noise, req.mu))
+        except Exception as e:
+            rospy.logerr('Error while setting the horizontal angle model')
+            rospy.logerr('\tError message=' + str(e))
             return SetCurrentModelResponse(False)
         return SetCurrentModelResponse(True)
 
@@ -144,9 +160,13 @@ class CurrentVelocityServer:
                 max_value=angle + 10. * np.pi / 180,
                 noise_amp=0.05,
                 mu=0.1)
-        except Exception, e:
-            self._logger.error('Error setting parameters for the current velocity')
-            self._logger.error('\tError message=' + str(e))
+            rospy.loginfo('Setting current velocity to %.2f m/s' %
+                          req.velocity)
+            rospy.loginfo('Setting horizontal angle to %.2f deg' %
+                          req.horizontal_angle)
+        except Exception as e:
+            rospy.logerr('Error setting parameters for the current velocity')
+            rospy.logerr('\tError message=' + str(e))
         return SetCurrentVelocityResponse(True)
 
     def update_current_velocity(self):
@@ -165,6 +185,7 @@ class CurrentVelocityServer:
         cur_vel_enu[1] *= -1
 
         msg = TwistStamped()
+        # TODO Allow generatinon in world and world_ned frames
         msg.header.frame_id = 'world'
         msg.header.stamp = rospy.Time.now()
 

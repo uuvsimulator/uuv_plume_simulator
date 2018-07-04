@@ -1,10 +1,23 @@
 <launch>
-  <!-- Initialize the Gazebo world  -->
-  <include file="$(find uuv_descriptions)/launch/ocean_waves.launch">
-    <arg name="gui" value="false"/>
-  </include>
+  <arg name="use_gazebo" default="false"/>
 
-  <include file="$(find uuv_plume_simulator)/launch/start_plume_server.launch"/>
+  <group if="$(arg use_gazebo)">
+    <!-- Initialize the Gazebo world  -->
+    <include file="$(find uuv_descriptions)/launch/ocean_waves.launch">
+      <arg name="gui" value="false"/>
+    </include>
+  </group>
+
+  <group unless="$(arg use_gazebo)">
+    <!-- Start the current velocity server -->
+    <include file="$(find uuv_plume_simulator)/launch/start_current_velocity_server.launch">
+      <arg name="current_velocity_topic" value="/hydrodynamics/current_velocity"/>
+    </include>
+  </group>
+
+  <include file="$(find uuv_plume_simulator)/launch/start_plume_server.launch">
+    <arg name="current_velocity_topic" value="/hydrodynamics/current_velocity"/>
+  </include>
 
   <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_plume_simulator)/rviz/plume_example.rviz"/>
 </launch>
