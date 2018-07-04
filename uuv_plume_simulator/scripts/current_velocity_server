@@ -15,7 +15,6 @@
 # limitations under the License.
 import rospy
 import numpy as np
-import logging
 from geometry_msgs.msg import TwistStamped
 from uuv_gm_process import GaussMarkovProcess
 from uuv_plume_msgs.srv import *
@@ -23,16 +22,6 @@ from uuv_plume_msgs.srv import *
 
 class CurrentVelocityServer:
     def __init__(self):
-        # Setting up the log
-        self._logger = logging.getLogger('current_velocity_server')
-        if len(self._logger.handlers) == 0:
-            out_hdlr = logging.StreamHandler(sys.stdout)
-            out_hdlr.setFormatter(logging.Formatter(
-                '%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
-            out_hdlr.setLevel(logging.INFO)
-            self._logger.addHandler(out_hdlr)
-            self._logger.setLevel(logging.INFO)
-
         # Creating Gauss-Markov process instances for the current velocity
         # magnitude and the horizontal angle
         self._current_models = dict(
