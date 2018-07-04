@@ -13,18 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-geometry_msgs/Vector3 turbulent_diffusion_coefficients
-geometry_msgs/Point source
-float64 buoyancy_flux
-float64 stability_param
-int32 n_points
-int32 max_particles_per_iter
-float64 x_min
-float64 x_max
-float64 y_min
-float64 y_max
-float64 z_min
-float64 z_max
-float64 max_life_time
----
-bool success
+# Practical salinity units
+string PSU="psu"
+# Parts per million
+string PPM="ppm"
+# Parts per thousand
+string PPT="ppt"
+
+std_msgs/Header header
+# Sensor link position
+geometry_msgs/Vector3 position
+# WGS84 coordinates
+geographic_msgs/GeoPoint geo_point
+float64 salinity
+float64 variance
+string unit
