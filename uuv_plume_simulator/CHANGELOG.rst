@@ -2,6 +2,9 @@
 Changelog for package uuv_plume_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.2.2 (2018-07-04)
 ------------------
 * ADD Gauss-Markov Python class for current velocity simulation
