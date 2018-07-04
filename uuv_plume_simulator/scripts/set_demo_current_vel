@@ -14,16 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-rosservice call /plume/create_passive_scalar_turbulent_plume "turbulent_diffusion_coefficients: {x: 0.05, y: 0.05, z: 0.05}
-source: {x: -0.0, y: 0.0, z: -40.0}
-buoyancy_flux: 0.05
-stability_param: 0.001
-n_points: 100000
-max_particles_per_iter: 10
-x_min: -200.0
-x_max: 200.0
-y_min: -75.0
-y_max: 75.0
-z_min: -50.0
-z_max: 0.0
-max_life_time: -1"
+# Use the services below to start a current velocity topic using the
+# current velocity server from uuv_plume_simulator's package
+
+# For a quasi-constant current velocity use the service call below
+# rosservice call set_current_velocity "{velocity: 0.2, horizontal_angle: 0.0}"
+
+rosservice call /current_velocity_server/set_current_velocity_model "{mean: 0.2, min: 0.1, max: 0.3, noise: 0.002, mu: 0.01}"
+rosservice call /current_velocity_server/set_angle_model "{mean: 0.2, min: 0.0, max: 0.8, noise: 0.02, mu: 0.1}"

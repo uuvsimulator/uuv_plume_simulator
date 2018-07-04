@@ -1,0 +1,198 @@
+#!/usr/bin/env python
+# Copyright (c) 2016 The UUV Simulator Authors.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import rospy
+import numpy as np
+from geometry_msgs.msg import TwistStamped
+from uuv_gm_process import GaussMarkovProcess
+from uuv_plume_msgs.srv import *
+
+
+class CurrentVelocityServer:
+    def __init__(self):
+        # Creating Gauss-Markov process instances for the current velocity
+        # magnitude and the horizontal angle
+        self._current_models = dict(
+            velocity=GaussMarkovProcess(),
+            angle=GaussMarkovProcess())
+
+        # Creating the current velocity publisher
+        current_output_topic_name = 'current_velocity'
+        if rospy.has_param('~current_velocity_topic'):
+            current_output_topic_name = rospy.get_param(
+                '~current_velocity_topic')
+            assert isinstance(current_output_topic_name, str)
+
+        self._current_velocity_pub = rospy.Publisher(
+            current_output_topic_name,
+            TwistStamped,
+            queue_size=1)
+
+        # Creating the update rate object
+        update_rate = 10
+        if rospy.has_param('~update_rate'):
+            update_rate = rospy.get_param('~update_rate')
+        rate = rospy.Rate(update_rate)
+
+        # Initializing the services to change the model of the current velocity
+        self._services = dict()
+        self._services['get_current_velocity_model'] = rospy.Service(
+            'get_current_velocity_model',
+            GetCurrentModel,
+            self.get_current_velocity_model)
+
+        self._services['get_angle_model'] = rospy.Service(
+            'get_angle_model',
+            GetCurrentModel,
+            self.get_angle_model)
+
+        self._services['set_current_velocity_model'] = rospy.Service(
+            'set_current_velocity_model',
+            SetCurrentModel,
+            self.set_current_velocity_model)
+
+        self._services['set_angle_model'] = rospy.Service(
+            'set_angle_model',
+            SetCurrentModel,
+            self.set_angle_model)
+
+        self._services['set_current_velocity'] = rospy.Service(
+            'set_current_velocity',
+            SetCurrentVelocity,
+            self.set_current_velocity)
+
+        while not rospy.is_shutdown():
+            self.update_current_velocity()
+            rate.sleep()
+
+    def get_current_velocity_model(self, req):
+        return GetCurrentModelResponse(
+            self._current_models['velocity'].mean,
+            self._current_models['velocity'].min_value,
+            self._current_models['velocity'].max_value,
+            self._current_models['velocity'].noise_amp,
+            self._current_models['velocity'].mu)
+
+    def get_angle_model(self, req):
+        return GetCurrentModelResponse(
+            self._current_models['angle'].mean,
+            self._current_models['angle'].min_value,
+            self._current_models['angle'].max_value,
+            self._current_models['angle'].noise_amp,
+            self._current_models['angle'].mu)
+
+    def set_current_velocity_model(self, req):
+        try:
+            self._current_models['velocity'].set_model(
+                mean=req.mean,
+                min_value=req.min,
+                max_value=req.max,
+                noise_amp=req.noise,
+                mu=req.mu)
+            rospy.loginfo('Setting current velocity model [m/s]:\n'
+                          '\tMean: %.2f\n'
+                          '\tMin. value: %.2f\n'
+                          '\tMax. value: %.2f\n'
+                          '\tNoise amplitude: %.2f\n'
+                          '\tMu: %.2f' % (req.mean, req.min, req.max,
+                                          req.noise, req.mu))
+        except Exception as e:
+            rospy.logerr('Error while setting the velocity model')
+            rospy.logerr('\tError message=' + str(e))
+            return SetCurrentModelResponse(False)
+        return SetCurrentModelResponse(True)
+
+    def set_angle_model(self, req):
+        try:
+            self._current_models['angle'].set_model(
+                mean=req.mean,
+                min_value=req.min,
+                max_value=req.max,
+                noise_amp=req.noise,
+                mu=req.mu)
+            rospy.loginfo('Setting horizontal angle model [rad]:\n'
+                          '\tMean: %.2f\n'
+                          '\tMin. value: %.2f\n'
+                          '\tMax. value: %.2f\n'
+                          '\tNoise amplitude: %.2f\n'
+                          '\tMu: %.2f' % (req.mean, req.min, req.max,
+                                          req.noise, req.mu))
+        except Exception as e:
+            rospy.logerr('Error while setting the horizontal angle model')
+            rospy.logerr('\tError message=' + str(e))
+            return SetCurrentModelResponse(False)
+        return SetCurrentModelResponse(True)
+
+    def set_current_velocity(self, req):
+        try:
+            self._current_models['velocity'].set_model(
+                mean=req.velocity,
+                min_value=req.velocity - 0.05,
+                max_value=req.velocity + 0.05,
+                noise_amp=0.005,
+                mu=0.05)
+
+            angle = req.horizontal_angle * np.pi / 180.0
+            self._current_models['angle'].set_model(
+                mean=angle,
+                min_value=angle - 10. * np.pi / 180,
+                max_value=angle + 10. * np.pi / 180,
+                noise_amp=0.05,
+                mu=0.1)
+            rospy.loginfo('Setting current velocity to %.2f m/s' %
+                          req.velocity)
+            rospy.loginfo('Setting horizontal angle to %.2f deg' %
+                          req.horizontal_angle)
+        except Exception as e:
+            rospy.logerr('Error setting parameters for the current velocity')
+            rospy.logerr('\tError message=' + str(e))
+        return SetCurrentVelocityResponse(True)
+
+    def update_current_velocity(self):
+        t = rospy.get_time()
+
+        vel = self._current_models['velocity'].update(t)
+        angle = self._current_models['angle'].update(t)
+
+        # Compute the current velocity in the NED frame
+        cur_vel_ned = np.array([vel * np.cos(angle),
+                                vel * np.sin(angle),
+                                0.0])
+
+        # Convert to ROS' ENU inertial frame
+        cur_vel_enu = cur_vel_ned
+        cur_vel_enu[1] *= -1
+
+        msg = TwistStamped()
+        # TODO Allow generatinon in world and world_ned frames
+        msg.header.frame_id = 'world'
+        msg.header.stamp = rospy.Time.now()
+
+        msg.twist.linear.x = cur_vel_enu[0]
+        msg.twist.linear.y = cur_vel_enu[1]
+        msg.twist.linear.z = cur_vel_enu[2]
+
+        self._current_velocity_pub.publish(msg)
+
+
+if __name__ == '__main__':
+    print 'Current velocity server'
+    rospy.init_node('current_velocity_server')
+
+    try:
+        pb = CurrentVelocityServer()
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        print('caught exception')

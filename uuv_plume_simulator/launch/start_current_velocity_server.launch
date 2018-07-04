@@ -1,0 +1,16 @@
+<launch>
+    <arg name="current_velocity_topic" default="current_velocity"/>
+    <arg name="update_rate" default="10"/>
+
+    <group ns="current_velocity_server">
+      <node name="current_velocity_server"
+            pkg="uuv_plume_simulator"
+            type="current_velocity_server"
+            output="screen">
+          <rosparam subst_value="true">
+              current_velocity_topic: $(arg current_velocity_topic)
+              update_rate: $(arg update_rate)
+          </rosparam>
+      </node>
+    </group>
+</launch>

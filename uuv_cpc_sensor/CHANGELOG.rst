@@ -2,6 +2,11 @@
 Changelog for package uuv_cpc_sensor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.0 (2018-07-04)
+------------------
+* UPDATE CHANGELOG files
+* Contributors: Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
+
 0.2.2 (2018-07-04)
 ------------------
 

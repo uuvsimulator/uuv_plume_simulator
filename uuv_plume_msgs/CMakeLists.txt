@@ -27,6 +27,10 @@ add_service_files(
   GetNumParticles.srv
   StorePlumeState.srv
   LoadPlumeParticles.srv
+  SetCurrentDirection.srv
+  SetCurrentModel.srv
+  GetCurrentModel.srv
+  SetCurrentVelocity.srv
 )
 
 generate_messages(

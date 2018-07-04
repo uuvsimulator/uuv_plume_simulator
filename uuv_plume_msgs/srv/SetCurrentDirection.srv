@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Copyright (c) 2016 The UUV Simulator Authors.
 # All rights reserved.
 #
@@ -14,5 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-rosservice call /hydrodynamics/set_current_velocity_model "{mean: 0.6, min: 0.4, max: 0.8, noise: 0.01, mu: 0.05}"
-rosservice call /hydrodynamics/set_current_horz_angle_model "{mean: 0.0, min: -0.8, max: 0.8, noise: 0.01, mu: 0.05}"
+float64 angle
+---
+bool success

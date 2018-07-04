@@ -1,0 +1,16 @@
+<launch>
+  <arg name="use_gazebo" default="false"/>
+
+  <group if="$(arg use_gazebo)">
+    <node pkg="uuv_plume_simulator" name="set_demo_current_vel_gazebo"
+      type="set_demo_current_vel_gazebo" output="screen"/>
+  </group>
+
+  <group unless="$(arg use_gazebo)">
+    <node pkg="uuv_plume_simulator" name="set_demo_current_vel"
+      type="set_demo_current_vel" output="screen"/>
+  </group>
+
+  <node pkg="uuv_plume_simulator" name="set_demo_turbulent_plume"
+    type="set_demo_turbulent_plume" output="screen"/>
+</launch>
