@@ -13,18 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-geometry_msgs/Vector3 turbulent_diffusion_coefficients
-geometry_msgs/Point source
-float64 buoyancy_flux
-float64 stability_param
-int32 n_points
-int32 max_particles_per_iter
-float64 x_min
-float64 x_max
-float64 y_min
-float64 y_max
-float64 z_min
-float64 z_max
-float64 max_life_time
----
-bool success
+Header header
+# Sensor link position wrt the reference frame
+geometry_msgs/Vector3 position
+# WGS84 coordinates (the altitude component corresponds to -1 * depth)
+geographic_msgs/GeoPoint geo_point
+# Particle concentration
+float64 concentration

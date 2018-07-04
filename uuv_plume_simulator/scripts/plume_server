@@ -64,6 +64,7 @@ class PlumeSimulatorServer:
         if rospy.has_param('~update_rate'):
             self._update_rate = float(rospy.get_param('~update_rate'))
             self._update_rate = max(0.05, self._update_rate)
+        rospy.loginfo('Update rate [Hz]: %.3f', self._update_rate)
 
         # Definition of service callbacks
         self._services = dict()
@@ -348,14 +349,25 @@ class PlumeSimulatorServer:
                 [request.source.x, request.source.y, request.source.z],
                 request.n_points,
                 rospy.get_time(),
-                request.max_particules_per_iter,
+                request.max_particles_per_iter,
                 request.max_life_time)
 
             self._model.set_x_lim(request.x_min, request.x_max)
             self._model.set_y_lim(request.y_min, request.y_max)
             self._model.set_z_lim(request.z_min, request.z_max)
             rospy.loginfo('Passive turbulent plume created!')
-            rospy.loginfo(request)
+            rospy.loginfo('Turbulent diffusion coefficients: (%.3f, %.3f, %.3f)' % (
+                request.turbulent_diffusion_coefficients.x,
+                request.turbulent_diffusion_coefficients.y,
+                request.turbulent_diffusion_coefficients.z))
+            rospy.loginfo('Buoyancy flux: %.4f' % request.buoyancy_flux)
+            rospy.loginfo('Stability parameters: %.4f' % request.stability_param)
+            rospy.loginfo('Source position wrt ENU frame: (%.2f %.2f, %.2f)' % (
+                request.source.x, request.source.y, request.source.z))
+            rospy.loginfo('Max. number of particles: %d' % request.n_points)
+            rospy.loginfo('Max. number of particles per iteration: %d' % request.max_particles_per_iter)
+            rospy.loginfo('Particle max. life time: %.2f' % request.max_life_time)
+
             return CreatePassiveScalarTurbulentPlumeResponse(True)
         except Exception, e:
             rospy.logerr('Error creating passive turbulent plume model, message=%s', str(e))
@@ -420,7 +432,6 @@ class PlumeSimulatorServer:
         the plume particle point cloud and visual markers for RViz.
         """
         self._dt = rospy.get_time() - self._t
-
         self._loading_plume.acquire()
         if self._dt <= 0.0:
             return True
@@ -432,9 +443,12 @@ class PlumeSimulatorServer:
             pc_msg.header.stamp = rospy.Time.now()
             pc_msg.header.frame_id = 'world'
             self._plume_point_cloud_publisher.publish(pc_msg)
+            self._loading_plume.release()
             return True
 
         if not self._model.update(rospy.get_time()):
+            rospy.logerr('Error while updating the plume particles positions')
+            self._loading_plume.release()
             return True
 
         marker = self._model.get_markers()

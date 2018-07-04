@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_plume_simulator</name>
-  <version>0.1.0</version>
+  <version>0.2.1</version>
   <description>Plume simulator package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -9,13 +9,13 @@
 
   <license>Apache-2.0</license>
 
-  <run_depend>std_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>uuv_plume_msgs</run_depend>
-  <run_depend>python-numpy</run_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>uuv_plume_msgs</exec_depend>
+  <exec_depend>python-numpy</exec_depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 

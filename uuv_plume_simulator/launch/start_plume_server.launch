@@ -1,5 +1,6 @@
 <launch>
   <arg name="current_velocity_topic" default="/hydrodynamics/current_velocity"/>
+  <arg name="update_rate" default="5.0"/>
 
   <group ns="plume">
     <node name="plume_simulation_server"
@@ -7,6 +8,9 @@
           type="plume_server"
           output="screen">
       <remap from="current_vel" to="$(arg current_velocity_topic)"/>
+      <rosparam subst_value="true">
+        update_rate: $(arg update_rate)
+      </rosparam>
     </node>
   </group>
 

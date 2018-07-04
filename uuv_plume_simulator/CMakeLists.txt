@@ -6,15 +6,17 @@ find_package(catkin REQUIRED)
 catkin_python_setup()
 
 catkin_package(
- CATKIN_DEPENDS   
-  geometry_msgs 
+ CATKIN_DEPENDS
+  geometry_msgs
   sensor_msgs
-  visualization_msgs 
-  rospy 
+  visualization_msgs
+  rospy
   uuv_plume_msgs
 )
 
 catkin_install_python(PROGRAMS scripts/plume_server
+                               scripts/set_turbulent_plume
+                               scripts/load_plume_particles
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch

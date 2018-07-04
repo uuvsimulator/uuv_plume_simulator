@@ -19,10 +19,11 @@ source: {x: -0.0, y: 0.0, z: -40.0}
 buoyancy_flux: 0.15
 stability_param: 0.001
 n_points: 100000
-max_particules_per_iter: 10
+max_particles_per_iter: 10
 x_min: -200.0
 x_max: 200.0
 y_min: -75.0
 y_max: 75.0
 z_min: -50.0
-z_max: 0.0"
+z_max: 0.0
+max_life_time: -1"

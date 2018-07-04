@@ -1,21 +1,23 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>uuv_plume_msgs</name>
+  <name>uuv_cpc_sensor</name>
   <version>0.2.1</version>
-  <description>Plume simulator messages and services package.</description>
+  <description>The uuv_cpc_sensor package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
   <author email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
 
   <license>Apache-2.0</license>
 
+  <build_depend>roscpp</build_depend>
+  <build_depend>geographiclib</build_depend>
+  <build_depend>tf2_ros</build_depend>
+
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>geographic_msgs</depend>
-
-  <build_depend>message_generation</build_depend>
-
-  <exec_depend>message_runtime</exec_depend>
+  <depend>uuv_plume_msgs</depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 </package>
