@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2016 The UUV Simulator Authors.
 # All rights reserved.
 #
@@ -14,16 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## ! DO NOT MANUALLY INVOKE THIS setup.py, USE CATKIN INSTEAD
+__all__ = ['gauss_markov_process']
 
-from distutils.core import setup
-from catkin_pkg.python_setup import generate_distutils_setup
-
-# fetch values from package.xml
-setup_args = generate_distutils_setup(
-    packages=['uuv_plume_model', 'uuv_gm_process'],
-    package_dir={'': 'src'},
-    requires=['rospy']
-)
-
-setup(**setup_args)
+from .gauss_markov_process import GaussMarkovProcess
