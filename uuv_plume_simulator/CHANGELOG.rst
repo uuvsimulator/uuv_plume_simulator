@@ -2,8 +2,8 @@
 Changelog for package uuv_plume_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2018-07-04)
+------------------
 * UPDATE CHANGELOG files
 * RM python-logging dependency
 * FIX Error message for service exceptions
