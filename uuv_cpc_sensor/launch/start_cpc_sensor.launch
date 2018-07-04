@@ -1,0 +1,41 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="latitude_ref" default="0"/>
+  <arg name="longitude_ref" default="0"/>
+  <arg name="odom_topic" default="pose_gt"/>
+  <arg name="gps_topic" default="gps"/>
+  <arg name="gamma" />
+  <arg name="gain" />
+  <arg name="radius" />
+  <arg name="update_rate" default="1"/>
+  <arg name="use_geo_coordinates" />
+  <arg name="reference_salinity_value" default="35.0"/>
+  <arg name="salinity_unit" default="ppt"/>
+  <arg name="sensor_frame_id" default="$(arg uuv_name)/base_link"/>
+  <arg name="publish_salinity" default="true" />
+  <arg name="use_odom" default="false" />
+  <arg name="use_gps" default="false" />
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_cpc_sensor" type="uuv_cpc_ros_sensor_node" name="uuv_cpc_ros_sensor_node"
+      output="screen">
+      <remap from="odom" to="$(arg odom_topic)"/>
+      <remap from="gps" to="$(arg gps_topic)"/>
+      <rosparam subst_value="true">
+        gamma: $(arg gamma)
+        gain: $(arg gain)
+        radius: $(arg radius)
+        update_rate: $(arg update_rate)
+        use_geo_coordinates: $(arg use_geo_coordinates)
+        latitude: $(arg latitude_ref)
+        longitude: $(arg longitude_ref)
+        reference_salinity_value: $(arg reference_salinity_value)
+        salinity_unit: $(arg salinity_unit)
+        sensor_frame_id: $(arg sensor_frame_id)
+        publish_salinity: $(arg publish_salinity)
+        use_odom: $(arg use_odom)
+        use_gps: $(arg use_gps)
+      </rosparam>
+    </node>
+  </group>
+</launch>

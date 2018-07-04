@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_plume_simulator</name>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <description>Plume simulator package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
