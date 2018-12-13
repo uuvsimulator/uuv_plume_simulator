@@ -2,6 +2,9 @@
 Changelog for package uuv_cpc_sensor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.3.0 (2018-07-04)
 ------------------
 * UPDATE CHANGELOG files
