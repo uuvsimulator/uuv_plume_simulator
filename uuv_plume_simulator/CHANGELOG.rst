@@ -2,6 +2,12 @@
 Changelog for package uuv_plume_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.1 (2018-12-14)
+------------------
+* CHANGE Set build dependencies
+  Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.3.0 (2018-07-04)
 ------------------
 * UPDATE CHANGELOG files
