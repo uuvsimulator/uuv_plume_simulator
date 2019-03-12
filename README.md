@@ -1,5 +1,9 @@
 # Plume simulator
 
+[![Build Status](https://travis-ci.org/uuvsimulator/uuv_plume_simulator.svg?branch=master)](https://travis-ci.org/uuvsimulator/uuv_plume_simulator)
+[![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](https://uuvsimulator.github.io/)
+[![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://uuvsimulator.slack.com)
+
 This repository contains ROS nodes and messages necessary to simulate a turbulent
 plume, which is an implementation of the algorithm described in [1]. This repository
 is complementary to the [Unmanned Underwater Vehicle Simulator (UUV Simulator)](https://github.com/uuvsimulator/uuv_simulator),
