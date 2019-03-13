@@ -2,8 +2,8 @@
 Changelog for package uuv_cpc_sensor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.2 (2019-03-13)
+------------------
 * Fix package dependencies
   Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhães
