@@ -13,7 +13,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""**Passive turbulent plume server node**
 
+**Input ROS parameters**
+
+* `update_rate` (*default:* `5`, *type:* `int` or `float`):  Update rate for the plume particle point cloud update
+
+**ROS services**
+
+> **`create_spheroid_plume`**
+
+> **`create_passive_scalar_turbulent_plume`**
+
+> **`set_plume_limits`**
+
+> **`set_plume_config`**
+
+> **`get_plume_config`**
+
+> **`delete_plume`**
+
+> **`set_plume_source_position`**
+
+> **`get_plume_source_position`**
+
+> **`get_num_particles`**
+
+> **`store_plume_state`**
+
+> **`load_plume_particles`**
+"""
+from __future__ import print_function
 import rospy
 from sensor_msgs.msg import PointCloud
 from visualization_msgs.msg import MarkerArray
@@ -278,7 +308,7 @@ class PlumeSimulatorServer:
                     return SetPlumeConfigurationRequest(False)
                 rospy.loginfo('\t- Max. number of particles per iteration=%d', request.max_particles_per_iter)
             return SetPlumeConfigurationResponse(True)
-        except Exception, e:
+        except Exception as e:
             rospy.logerr('Error setting the plume configuration, message=%s', str(e))
             return SetPlumeConfigurationResponse(False)
 
@@ -295,7 +325,7 @@ class PlumeSimulatorServer:
             self._model.set_y_lim(request.y_min, request.y_max)
             self._model.set_z_lim(request.z_min, request.z_max)
             return SetPlumeLimitsResponse(True)
-        except Exception, e:
+        except Exception as e:
             rospy.logerr('Error setting the plume limits, message=%s', str(e))
             return SetPlumeLimitsResponse(False)
 
@@ -328,7 +358,7 @@ class PlumeSimulatorServer:
             rospy.loginfo('Spheroid plume created!')
             rospy.loginfo(request)
             return CreateSpheroidPlumeResponse(True)
-        except Exception, e:
+        except Exception as e:
             rospy.logerr('Error creating spheroid plume model, message=%s', str(e))
             self._model = None
             return CreateSpheroidPlumeResponse(False)
@@ -369,7 +399,7 @@ class PlumeSimulatorServer:
             rospy.loginfo('Particle max. life time: %.2f' % request.max_life_time)
 
             return CreatePassiveScalarTurbulentPlumeResponse(True)
-        except Exception, e:
+        except Exception as e:
             rospy.logerr('Error creating passive turbulent plume model, message=%s', str(e))
             self._model = None
             return CreatePassiveScalarTurbulentPlumeResponse(False)
@@ -419,7 +449,7 @@ class PlumeSimulatorServer:
                 plume_particles['y'],
                 plume_particles['z'],
                 plume_particles['time_creation'])
-        except Exception, e:
+        except Exception as e:
             rospy.logerr('Error while loading plume file, message=%s', str(e))
             return LoadPlumeParticlesResponse(False)
 
@@ -464,7 +494,7 @@ class PlumeSimulatorServer:
 
 
 if __name__ == '__main__':
-    print 'Plume simulator server'
+    print('Plume simulator server')
     rospy.init_node('plume_simulator_server')
 
     try:

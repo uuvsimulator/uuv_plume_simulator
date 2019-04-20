@@ -13,6 +13,91 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""**Current velocity server node**
+
+In case no Gazebo simulation is providing the current velocity 
+topic to steer the plume, this node generates a 2D current
+velocity topic. Both the current's velocity magnitude and horizontal 
+angle are modeled using a Gaussian-Markov process of first order, as 
+shown in [Fossen's lecture notes](http://www.fossen.biz/wiley/Ch8.pdf).
+The velocity magnitude is described by
+
+$$
+    \dot{v_c}(t) + \mu_c v_c(t) = w_c
+$$
+
+and the horizontal angle $\phi$ is modeled similarly as
+
+$$
+    \dot{\phi}(t) + \mu_a \phi(t) = w_a
+$$
+
+where $\mu$ is the inverse of the time constant of the process and
+$w$ is a random variable described by a normal distribution.
+
+The final current velocity vector is then written as
+
+$$
+    v(t) = ( v_c \cos \phi, v_c \sin \phi, 0 )
+$$
+
+and published as a `geometry_msgs/TwistStamped` message.
+
+**Input ROS parameters**
+
+* `current_velocity_topic` (*default:* `current_velocity`, *type:* `string`): Name of the output current velocity topic
+* `update_rate` (*default:* `10`, *type:* `int` or `float`): Update rate of the output current velocity topic
+
+**ROS services**
+
+> **`get_current_velocity_model`**
+
+ROS service description: [`GetCurrentModel`](uuv_plume_msgs.md)
+
+Returns the parameters for the current velocity magnitude $v_c$.
+
+> **`get_angle_model`**
+
+ROS service description: [`GetCurrentModel`](uuv_plume_msgs.md)
+
+> **`set_current_velocity_model`**
+
+ROS service description: [`SetCurrentModel`](uuv_plume_msgs.md)
+
+> **`set_angle_model`**
+
+ROS service description: [`SetCurrentModel`](uuv_plume_msgs.md)
+
+> **`set_current_velocity`**
+
+ROS service description: [`SetCurrentVelocity`](uuv_plume_msgs.md)
+
+**Launch file snippet**
+
+```xml
+<node name="current_velocity_server"
+    pkg="uuv_plume_simulator"
+    type="current_velocity_server"
+    output="screen">
+    <rosparam subst_value="true">
+        current_velocity_topic: /current_velocity
+        update_rate: 10
+    </rosparam>
+</node>
+```
+
+**Running from the launch file**
+
+```bash
+>> roslaunch uuv_plume_simulator start_current_velocity_server.launch current_velocity_topic:=current_velocity update_rate:=10
+```
+
+!!! warning
+    Do **NOT** run the current velocity server with a Gazebo 
+    simulation that generates the same topic, it can cause unexpected 
+    behaviours to the plume's steering.
+"""
+from __future__ import print_function
 import rospy
 import numpy as np
 from geometry_msgs.msg import TwistStamped
@@ -21,6 +106,8 @@ from uuv_plume_msgs.srv import *
 
 
 class CurrentVelocityServer:
+    """Current velocity server class
+    """
     def __init__(self):
         # Creating Gauss-Markov process instances for the current velocity
         # magnitude and the horizontal angle
@@ -188,7 +275,7 @@ class CurrentVelocityServer:
 
 
 if __name__ == '__main__':
-    print 'Current velocity server'
+    print('Current velocity server')
     rospy.init_node('current_velocity_server')
 
     try:
