@@ -2,8 +2,8 @@
 Changelog for package uuv_cpc_sensor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.2 (2019-04-21)
+------------------
 * Remove geographiclib linking problems
   Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
 * Fix geographiclib-dev dependency
