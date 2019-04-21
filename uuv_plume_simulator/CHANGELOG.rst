@@ -2,6 +2,16 @@
 Changelog for package uuv_plume_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.2 (2019-04-21)
+------------------
+* Fix installation of demo scripts
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Fix linking of GeographicLib
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Fix scripts for Python 3 compatibility
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.3.1 (2018-12-14)
 ------------------
 * CHANGE Set build dependencies
