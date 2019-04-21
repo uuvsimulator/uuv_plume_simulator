@@ -41,7 +41,7 @@ if __name__ == '__main__':
         load_particles = rospy.ServiceProxy(
             'load_plume_particles',
             LoadPlumeParticles)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         raise rospy.ROSException('Service call failed, error=' + e)
 
     success = load_particles(filename)
