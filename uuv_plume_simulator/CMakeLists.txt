@@ -22,4 +22,4 @@ install(PROGRAMS
           scripts/set_demo_spheroid_plume
           scripts/set_demo_current_vel
           scripts/set_demo_current_vel_gazebo
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
