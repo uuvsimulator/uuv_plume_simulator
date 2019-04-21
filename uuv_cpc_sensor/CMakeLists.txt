@@ -17,7 +17,7 @@ find_package(catkin REQUIRED
   roscpp)
 
 find_package(Boost REQUIRED COMPONENTS system)
-find_package(GeographicLib REQUIRED)
+# find_package(GeographicLib REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -35,12 +35,13 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIR}
+  ${GeographicLib_INCLUDE_DIRS}
 )
 
 # Particle concentration sensor node
 add_library(uuv_cpc_ros_sensor src/CPCSensor.cc)
 add_dependencies(uuv_cpc_ros_sensor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(uuv_cpc_ros_sensor ${catkin_LIBRARIES})
+target_link_libraries(uuv_cpc_ros_sensor ${catkin_LIBRARIES} ${GeographicLib_LIBRARIES})
 
 add_executable(uuv_cpc_ros_sensor_node src/CPCSensorNode.cc)
 add_dependencies(uuv_cpc_ros_sensor_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
