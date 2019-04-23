@@ -13,35 +13,244 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""**Passive turbulent plume server node**
+"""**Description**
+
+Passive turbulent plume server node.
+
+!!! note "See also"
+
+    [Description of the turbulent plume model](../user_guide/introduction.md)
 
 **Input ROS parameters**
 
 * `update_rate` (*default:* `5`, *type:* `int` or `float`):  Update rate for the plume particle point cloud update
 
+**Launch file snippet**
+
+```xml
+<group ns="plume">
+    <node name="plume_simulation_server"
+          pkg="uuv_plume_simulator"
+          type="plume_server"
+          output="screen">
+      <remap from="current_vel" to="/hydrodynamics/current_velocity"/>
+      <rosparam subst_value="true">
+            update_rate: 5
+      </rosparam>
+    </node>
+</group>
+```
+
 **ROS services**
 
 > **`create_spheroid_plume`**
 
+*Service description file*
+
+[`uuv_plume_msgs/CreateSpheroidPlume`](uuv_plume_msgs.md#createspheroidplume)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/create_spheroid_plume "source: {x: 0.0, y: 0.0, z: 0.0}
+orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}
+n_points: 0
+a: 0.0
+c: 0.0
+x_min: 0.0
+x_max: 0.0
+y_min: 0.0
+y_max: 0.0
+z_min: 0.0
+z_max: 0.0"
+```
+
+Create a static plume in the shape of a spheroid.
+
+* `source`: Plume source position wrt ENU frame
+* `orientation`: Spheroid orientation in quaternion
+* `n_points`: Number of plume particles
+* `a` and `c`: Spheroid's semi-axis length
+* `x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max`: Limits of the bounding box where the plume particles are allowed to exist
+
 > **`create_passive_scalar_turbulent_plume`**
+
+*Service description file*
+
+[`uuv_plume_msgs/CreatePassiveScalarTurbulentPlume`](uuv_plume_msgs.md#createpassivescalarturbulentplume)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/create_passive_scalar_turbulent_plume "turbulent_diffusion_coefficients: {x: 0.0, y: 0.0, z: 0.0}
+source: {x: 0.0, y: 0.0, z: 0.0}
+buoyancy_flux: 0.0
+stability_param: 0.0
+n_points: 0
+max_particles_per_iter: 0
+x_min: 0.0
+x_max: 0.0
+y_min: 0.0
+y_max: 0.0
+z_min: 0.0
+z_max: 0.0
+max_life_time: 0.0" 
+```
+
+Create a passive turbulent plume.
+
+* `turbulent_diffusion_coefficients`: Coefficients ruling the diffusion of the particles for each degree of freedom of the particle.
+* `source`: Position of the plume source wrt ENU frame
+* `buoyancy_flux` and `stability_param`: Parameters controlling the plume rise
+* `n_points`: Maximum number of plume particles to be generated
+* `max_particles_per_iter`: Maximum number of particles generated at the source position at each iteration
+* `x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max`: Limits of the bounding box where the plume particles are allowed to exist
+* `max_life_time`: Maximum life time of each particle in seconds
 
 > **`set_plume_limits`**
 
+*Service description file*
+
+[`uuv_plume_msgs/SetPlumeLimits`](uuv_plume_msgs.md#setplumelimits)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/set_plume_limits "{x_min: 0.0, x_max: 0.0, y_min: 0.0, y_max: 0.0, z_min: 0.0, z_max: 0.0}"
+```
+
+Sets the bounds of the box where the plume particles are allowed to exist.
+
+* `x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max`: Limits of the bounding box where the plume particles are allowed to exist
+
 > **`set_plume_config`**
+
+*Service description file*
+
+[`uuv_plume_msgs/SetPlumeConfiguration`](uuv_plume_msgs.md#setplumeconfiguration)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/set_plume_config "n_points: 0
+max_particles_per_iter: 0"
+```
+
+Configure the plume's particle generation parameters.
+
+* `n_points`: Maximum number of plume particles to be generated
+* `max_particles_per_iter`: Maximum number of particles generated at the source position at each iteration
 
 > **`get_plume_config`**
 
+*Service description file*
+
+[`uuv_plume_msgs/GetPlumeConfiguration`](uuv_plume_msgs.md#getplumeconfiguration)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/get_plume_config
+```
+
+Return the plume's generation configuration parameters, including maximum number of particles,
+maximum number of particles per iteration, source position and limits of the bounding box.
+
 > **`delete_plume`**
+
+*Service description file*
+
+[`uuv_plume_msgs/DeletePlume`](uuv_plume_msgs.md#deleteplume)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/delete_plume
+```
+
+Delete the source and the particles.
 
 > **`set_plume_source_position`**
 
+*Service description file*
+
+[`uuv_plume_msgs/SetPlumeSourcePosition`](uuv_plume_msgs.md#setplumesourceposition)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/set_plume_source_position "source:
+  x: 0.0
+  y: 0.0
+  z: 0.0"
+```
+
+Set plume source position wrt ENU frame
+
+* `source`: New plume source position wrt ENU frame
+
 > **`get_plume_source_position`**
+
+*Service description file*
+
+[`uuv_plume_msgs/GetPlumeSourcePosition`](uuv_plume_msgs.md#getplumesourceposition)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/get_plume_source_position
+```
+
+Return the plume source position coordinates.
 
 > **`get_num_particles`**
 
+*Service description file*
+
+[`uuv_plume_msgs/GetNumParticles`](uuv_plume_msgs.md#getnumparticles)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/get_num_particles
+```
+
+Return current number of plume particles.
+
 > **`store_plume_state`**
 
+*Service description file*
+
+[`uuv_plume_msgs/StorePlumeState`](uuv_plume_msgs.md#storeplumestate)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/store_plume_state "output_dir: ''
+filename: ''"
+```
+
+Store the position and time of creation for of each particle in a file as an YAML file.
+
+* `output_dir`: Path to output directory
+* `filename`: Output YAML file
+
 > **`load_plume_particles`**
+
+*Service description file*
+
+[`uuv_plume_msgs/LoadPlumeParticles`](uuv_plume_msgs.md#loadplumeparticles)
+
+*Service call*
+
+```bash
+rosservice call /<plume_namespace>/load_plume_particles "plume_file: ''" 
+```
+
+Load an YAML file with the plume particles' list positions and time of creation.
+
+* `plume_file`: Plume YAML file
+
 """
 from __future__ import print_function
 import rospy

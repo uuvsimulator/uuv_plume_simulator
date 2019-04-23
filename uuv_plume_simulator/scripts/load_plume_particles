@@ -13,7 +13,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""**Description**
 
+Node to call the ROS service from the plume server to load
+the plume particles from an YAML file.
+
+**Input ROS parameters**
+
+* `filename` (*type:* `string`): Input YAML file where the plume particles' coordinates and time of creation are stored
+
+**ROS launch snippet**
+
+```xml
+<node name="load_plume_particles"
+      pkg="uuv_plume_simulator"
+      type="load_plume_particles"
+      output="screen">
+    <rosparam>
+        filename: /<path>/file.yaml
+    </rosparam>
+</node>
+```
+
+"""
 import rospy
 import sys
 from uuv_plume_msgs.srv import LoadPlumeParticles

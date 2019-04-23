@@ -13,6 +13,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""**Description**
+
+Node to call the ROS service from the plume server to create a 
+passive turbulent plume.
+
+!!! note "See als
+
+    [Description of the turbulent plume model](../user_guide/introduction.md)
+
+**Input ROS parameters**
+
+* `turbulent_diffusion_coefficients` (*type:* `dict`): Dictionary with keys `x`, `y` and `z`
+
+**ROS launch snippet**
+
+**Running from the launch file**
+
+```bash
+roslaunch uuv_plume_simulator start_turbulent_plume.launch
+```
+
+"""
 from __future__ import print_function
 import rospy
 import sys
