@@ -57,7 +57,7 @@ class GaussMarkovProcess(object):
         assert min_value < max_value, 'Min. value must be smaller than max. value'
         assert min_value < mean < max_value, 'Mean value must be in the interval delimited by min. and max. value'
         assert mu >= 0, 'Mu must be greater or equal to zero'
-        assert noise_amp >= 0 'Noise amplitude must be greater or equal to zero'
+        assert noise_amp >= 0, 'Noise amplitude must be greater or equal to zero'
 
         self._mean = mean
         self._min = min_value
