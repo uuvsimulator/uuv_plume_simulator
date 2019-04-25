@@ -23,8 +23,8 @@ Changelog for package uuv_cpc_sensor
 0.2.2 (2018-07-04)
 ------------------
 
-Forthcoming
------------
+0.3.3 (2019-04-26)
+------------------
 * Remove URDF snippets for the CPC Gazebo sensor
   Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
 * Fix docstrings for Python modules
