@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 import numpy as np
 from sensor_msgs.msg import PointCloud, ChannelFloat32
@@ -32,6 +32,18 @@ class Plume(object):
     LABEL = ''
 
     def __init__(self, source_pos, n_points, start_time):
+        """Plume class constructor, abstract class for plume model classes.
+
+        > **Parameters**
+
+        * `source_pos` (*type:* `list`): 3D position of the plume source
+        wrt ENU frame
+        * `n_points` (*type:* `int`): maximum number of plume particles to
+        be generated
+        * `start_time (*type:* `float): time stamp of time of the creation of 
+        the plume model in seconds. This will be used to compute the relative
+        time of creation of each particle
+        """
         assert n_points > 0, 'Number of points to generate the plume must be' \
             ' greater than zero'
         assert len(source_pos) == 3, 'Source position must have three elements'
@@ -66,16 +78,13 @@ class Plume(object):
 
     @staticmethod
     def create_plume_model(tag, *args):
-        """
-        Factory function to create the plume model using the LABEL attribute
-        as identifier.
+        """Factory function to create the plume model using the LABEL 
+        attribute as identifier.
 
-        Parameters
-        ----------
-        tag: str
-            Label of the plume model to be created.
-        args:
-            Input arguments for the specific plume model to be created.
+        > **Parameters**
+        
+        * `tag` (*type:* `str`): label of the plume model to be created
+        * `args`: list of input arguments for the specific plume model to be created
         """
         for model in Plume.__subclasses__():
             if model.LABEL == tag:
@@ -84,14 +93,20 @@ class Plume(object):
 
     @property
     def source_pos(self):
-        """
-        Return the position vector with the Cartesian coordinates for the plume
-        source.
+        """Return the position vector with the Cartesian coordinates 
+        for the plume source
         """
         return self._source_pos
 
     @source_pos.setter
     def source_pos(self, new_pos):
+        """Set new plume source position.
+
+        > **Parameters**
+
+        * `new_pos`(*type:* `list`): 3D coordinates of the plume
+        source wrt ENU frame
+        """
         assert isinstance(new_pos, list)
         assert len(new_pos) == 3
 
@@ -111,8 +126,7 @@ class Plume(object):
 
     @property
     def x(self):
-        """
-        Return only the X coordinates for the particle positions.
+        """Return only the X coordinates for the particle positions.
         """
         if self._pnts is None:
             return None
@@ -120,15 +134,13 @@ class Plume(object):
 
     @property
     def x_lim(self):
-        """
-        Return the lower and upper limit for the bounding box on the X axis.
+        """Return the lower and upper limit for the bounding box on the X axis.
         """
         return self._x_lim
 
     @property
     def y(self):
-        """
-        Return only the Y coordinates for the particle positions.
+        """Return only the Y coordinates for the particle positions.
         """
         if self._pnts is None:
             return None
@@ -143,15 +155,13 @@ class Plume(object):
 
     @property
     def y_lim(self):
-        """
-        Return the lower and upper limit for the bounding box on the Y axis.
+        """Return the lower and upper limit for the bounding box on the Y axis.
         """
         return self._y_lim
 
     @property
     def z(self):
-        """
-        Return only the Z coordinates for the particle positions.
+        """Return only the Z coordinates for the particle positions.
         """
         if self._pnts is None:
             return None
@@ -159,70 +169,67 @@ class Plume(object):
 
     @property
     def z_lim(self):
-        """
-        Return the lower and upper limit for the bounding box on the Z axis.
+        """Return the lower and upper limit for the bounding box on the Z axis.
         """
         return self._z_lim
 
     @property
     def points(self):
-        """
-        Return list of [N x 3] position vectors for particles created.
+        """Return list of `[N x 3]` position vectors for particles created.
         """
         return self._pnts
 
     @property
     def n_points(self):
-        """
-        Return the maximum number of points to be created by the plume model.
+        """Return the maximum number of points to be created by the plume model.
         """
         return self._n_points
 
     @property
     def num_particles(self):
+        """Return the current number of particles."""
         if self._pnts is None:
             return 0
         else:
             return self._pnts.shape[0]
 
     def set_n_points(self, n_points):
-        """
-        Set the maximum number of points to be created by the plume model.
+        """Set the maximum number of points to be created by the plume model.
 
-        Parameters
-        ----------
-        n_points: int
-            Number of particles (must be greater than zero).
+        > **Parameters**
+        
+        * n_points (*type: `int`): number maximum of particles (must be greater 
+        than zero).
         """
         if n_points > 0:
             self._n_points = n_points
             return True
         else:
-            print 'Number of plume particle points must be positive'
+            print('Number of plume particle points must be positive')
             return False
 
     def update_current_vel(self, vel):
-        """
-        Update the current velocity vector.
+        """Update the current velocity vector.
 
-        Parameters
-        ----------
-        vel: list or numpy.array
-            Current velocity vector containing three elements :math:`(u, v, w)`.
+        > **Parameters**
+        
+        * `vel` (*type:* `list` or `numpy.array`): current velocity vector 
+        containing three elements $(u, v, w)$.
         """
         self._current_vel = vel
 
     def set_x_lim(self, min_value, max_value):
-        """
-        Set the X limits for the plume bounding box. The bounding box is
+        """Set the X limits for the plume bounding box. The bounding box is
         defined with respect to the ENU inertial frame.
 
-        Parameters
-        ----------
-        min_value: float
-            Lower limit for the bounding box over the X axis.
-        max_value: float
-            Upper limit for the bounding box over the X axis.
+        > **Parameters**
+        
+        * `min_value` (*type:* `float`): lower limit for the bounding box over the X axis.
+        * `max_value` (*type:* `float`): upper limit for the bounding box over the X axis.
+
+        > **Returns**
+        
+        `True` if limits are valid.
         """
         assert min_value < max_value, 'Limit interval is invalid'
 
@@ -231,20 +238,21 @@ class Plume(object):
             self._x_lim[1] = max_value
             return True
         else:
-            print 'Plume source is outside of limits, ignoring new X limits'
+            print('Plume source is outside of limits, ignoring new X limits')
             return False
 
     def set_y_lim(self, min_value, max_value):
-        """
-        Set the Y limits for the plume bounding box. The bounding box is
+        """Set the Y limits for the plume bounding box. The bounding box is
         defined with respect to the ENU inertial frame.
 
-        Parameters
-        ----------
-        min_value: float
-            Lower limit for the bounding box over the Y axis.
-        max_value: float
-            Upper limit for the bounding box over the Y axis.
+        > **Parameters**
+        
+        * `min_value` (*type:* `float`): lower limit for the bounding box over the Y axis.
+        * `max_value` (*type:* `float`): upper limit for the bounding box over the Y axis.
+
+        > **Returns**
+        
+        `True` if limits are valid.
         """
         assert min_value < max_value, 'Limit interval is invalid'
 
@@ -253,20 +261,21 @@ class Plume(object):
             self._y_lim[1] = max_value
             return True
         else:
-            print 'Plume source is outside of limits, ignoring new Y limits'
+            print('Plume source is outside of limits, ignoring new Y limits')
             return False
 
     def set_z_lim(self, min_value, max_value):
-        """
-        Set the Z limits for the plume bounding box. The bounding box is
+        """Set the Z limits for the plume bounding box. The bounding box is
         defined with respect to the ENU inertial frame.
 
-        Parameters
-        ----------
-        min_value: float
-            Lower limit for the bounding box over the Z axis.
-        max_value: float
-            Upper limit for the bounding box over the Z axis.
+        > **Parameters**
+        
+        * `min_value` (*type:* `float`): lower limit for the bounding box over the Z axis.
+        * `max_value` (*type:* `float`): upper limit for the bounding box over the Z axis.
+
+        > **Returns**
+        
+        `True` if limits are valid.
         """
         assert min_value < 0, 'Minimum value must be lower than zero'
         assert min_value < max_value, 'Limit interval is invalid'
@@ -277,21 +286,22 @@ class Plume(object):
             self._z_lim[1] = min(0, max_value)
             return True
         else:
-            print 'Plume source is outside of limits, ignoring new Z limits'
+            print('Plume source is outside of limits, ignoring new Z limits')
             return False
 
     def reset_plume(self):
-        """
-        Reset point cloud and time of creating vectors.
-        """
+        """Reset point cloud and time of creating vectors."""
         self._pnts = None
         self._time_creation = None
 
     def get_contraints_filter(self):
-        """
-        Return a binary vector of N elements, N being current number of
-        particles created. The i-th element is set to False if the i-th
+        """Return a binary vector of $N$ elements, $N$ being current number of
+        particles created. The $i$-th element is set to False if the $i$-th
         particle finds itself outside of the bounding box limits.
+        
+        > **Returns**
+
+        Logical vector with elements set to *True* if they fulfill the constraints.
         """
         particle_filter = self._pnts[:, 0].flatten() >= self._x_lim[0]
         particle_filter = np.logical_and(
@@ -316,8 +326,7 @@ class Plume(object):
         return particle_filter
 
     def apply_constraints(self):
-        """
-        Truncate the position of the particle to the closest bounding box limit
+        """Truncate the position of the particle to the closest bounding box limit
         if the particle is positioned outside of the limits.
         """
         assert self._pnts is not None, 'Plume points have not been initialized'
@@ -332,6 +341,18 @@ class Plume(object):
         self._pnts[:, 2] = np.minimum(self._z_lim[1], self._pnts[:, 2])
 
     def set_plume_particles(self, t, x, y, z, time_creation):
+        """Set the plume particles with the input coordinates wrt ENU frame
+        and time of creation vector in seconds.
+
+        > **Parameters**
+
+        * `t` (*type:* `float`): Current time stamp in seconds
+        * `x` (*type:* `list`): List of X coordinates for the plume particles' positions
+        * `y` (*type:* `list`): List of Y coordinates for the plume particles' positions
+        * `z` (*type:* `list`): List of Z coordinates for the plume particles' positions
+        * `time_creation`(*type:* `list`): List of the relative time of creation for 
+        each particle in seconds
+        """
         self._pnts = np.zeros(shape=(len(x), 3))
         self._time_creation = np.zeros(len(time_creation))
 
@@ -344,10 +365,14 @@ class Plume(object):
         self._pnts[:, 2] = np.array(z)
 
     def get_point_cloud_as_msg(self):
-        """
-        Return a ROS point cloud sensor message with the points representing
+        """Return a ROS point cloud sensor message with the points representing
         the plume's particles and one channel containing the time of creation
         for each particle.
+
+        > **Returns**
+
+        The plume particles as a `sensor_msgs/PointCloud` message or `None` 
+        if no particles are found.
         """
         if self._pnts is None or self._time_creation is None:
             return None
@@ -369,11 +394,16 @@ class Plume(object):
         return pc
 
     def get_markers(self):
-        """
-        Return a ROS marker array message structure with an sphere marker to
+        """Return a ROS marker array message structure with an sphere marker to
         represent the plume source, the bounding box and an arrow marker to
         show the direction of the current velocity if it's norm is greater
         than zero.
+
+        > **Returns**
+
+        `visualizaton_msgs/MarkerArray` message with markers for the current 
+        velocity arrow and source position or `None` if no plume particles are
+        found.
         """
         if self._pnts is None:
             return None
@@ -479,8 +509,7 @@ class Plume(object):
         return marker_array
 
     def update(self, t=0.0):
-        """
-        Plume dynamics update function. It must be implemented by the child
+        """Plume dynamics update function. It must be implemented by the child
         class and will be used by the plume server to update the position of
         the plume particles at each iteration.
         """

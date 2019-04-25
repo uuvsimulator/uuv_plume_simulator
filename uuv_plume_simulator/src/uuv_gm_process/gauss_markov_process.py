@@ -16,6 +16,8 @@ import numpy as np
 
 
 class GaussMarkovProcess(object):
+    """Gauss-Markov process of first order
+    """
     def __init__(self):
         self._mean = 0
         self._min = -1
