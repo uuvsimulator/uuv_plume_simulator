@@ -37,6 +37,20 @@ Changelog for package uuv_plume_simulator
 * ADD Gauss-Markov Python class for current velocity simulation
 * Contributors: Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
 
+Forthcoming
+-----------
+* Fix docstrings for Python modules
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Fix assertion test for noise amplitude
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Modify demo current velocity model
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Add documentation for service calls and snippets
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Fix name of package for world models
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.2.1 (2018-07-04)
 ------------------
 * ADD CHANGELOG and bump version to 0.2.1
