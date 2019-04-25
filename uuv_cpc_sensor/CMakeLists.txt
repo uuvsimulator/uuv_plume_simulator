@@ -62,9 +62,5 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN ".~" EXCLUDE
 )
 
-# Install URDF files
-install(DIRECTORY urdf
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-        PATTERN "*~" EXCLUDE)
 
 
