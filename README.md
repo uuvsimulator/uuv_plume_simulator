@@ -1,4 +1,14 @@
-# Plume simulator
+# Plume Simulator
+
+[![Build Status](https://travis-ci.org/uuvsimulator/uuv_plume_simulator.svg?branch=master)](https://travis-ci.org/uuvsimulator/uuv_plume_simulator)
+[![GitHub issues](https://img.shields.io/github/issues/uuvsimulator/uuv_plume_simulator.svg)](https://github.com/uuvsimulator/uuv_plume_simulator/issues)
+![License](https://img.shields.io/badge/license-Apache%202-blue.svg)
+
+> Link to the `uuv_plume_simulator` repository [here](https://github.com/uuvsimulator/uuv_plume_simulator)
+
+> Link to the [documentation page](https://uuvsimulator.github.io/packages/uuv_plume_simulator/intro/)
+
+> Chat on [Discord](https://discord.gg/zNauF2F)
 
 This repository contains ROS nodes and messages necessary to simulate a turbulent
 plume, which is an implementation of the algorithm described in [1]. This repository
@@ -7,7 +17,7 @@ an open-source project extending the simulation capabilities of the robotics
 simulator Gazebo to underwater vehicles and environments. For installation and
 usage instructions, please refer to the [documentation pages](https://uuvsimulator.github.io/).
 
-![Visualization in RViz](plume.png)
+![Visualization in RViz](images/plume.png)
 
 [[1] Yu Tian and Aiqun Zhang, "Simulation environment and guidance system for
     AUV tracing chemical plume in 3-dimensions," 2010 2nd International
@@ -83,4 +93,4 @@ that can be used to add one to the robot description.
 ## License
 
 `uuv_plume_simulator` is open-sourced under the Apache-2.0 license. See the
-[LICENSE](LICENSE) file for details.
+[LICENSE](https://github.com/uuvsimulator/uuv_plume_simulator/blob/master/LICENSE) file for details.

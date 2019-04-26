@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+__all__ = ['plume', 'spheroid', 'passive_scalar_turbulence']
+
 from .plume import Plume
 from .spheroid import PlumeSpheroid
 from .passive_scalar_turbulence import PlumePassiveScalarTurbulence
+    

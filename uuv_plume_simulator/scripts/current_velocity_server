@@ -13,8 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""**Current velocity server node**
+"""**Description**
 
+Current velocity server node.
 In case no Gazebo simulation is providing the current velocity 
 topic to steer the plume, this node generates a 2D current
 velocity topic. Both the current's velocity magnitude and horizontal 
@@ -48,30 +49,6 @@ and published as a `geometry_msgs/TwistStamped` message.
 * `current_velocity_topic` (*default:* `current_velocity`, *type:* `string`): Name of the output current velocity topic
 * `update_rate` (*default:* `10`, *type:* `int` or `float`): Update rate of the output current velocity topic
 
-**ROS services**
-
-> **`get_current_velocity_model`**
-
-ROS service description: [`GetCurrentModel`](uuv_plume_msgs.md)
-
-Returns the parameters for the current velocity magnitude $v_c$.
-
-> **`get_angle_model`**
-
-ROS service description: [`GetCurrentModel`](uuv_plume_msgs.md)
-
-> **`set_current_velocity_model`**
-
-ROS service description: [`SetCurrentModel`](uuv_plume_msgs.md)
-
-> **`set_angle_model`**
-
-ROS service description: [`SetCurrentModel`](uuv_plume_msgs.md)
-
-> **`set_current_velocity`**
-
-ROS service description: [`SetCurrentVelocity`](uuv_plume_msgs.md)
-
 **Launch file snippet**
 
 ```xml
@@ -89,13 +66,100 @@ ROS service description: [`SetCurrentVelocity`](uuv_plume_msgs.md)
 **Running from the launch file**
 
 ```bash
->> roslaunch uuv_plume_simulator start_current_velocity_server.launch current_velocity_topic:=current_velocity update_rate:=10
+roslaunch uuv_plume_simulator start_current_velocity_server.launch current_velocity_topic:=current_velocity update_rate:=10
 ```
 
 !!! warning
     Do **NOT** run the current velocity server with a Gazebo 
     simulation that generates the same topic, it can cause unexpected 
     behaviours to the plume's steering.
+
+**ROS services**
+
+> **`get_current_velocity_model`**
+
+*Service description file*
+
+[`uuv_plume_msgs/GetCurrentModel`](uuv_plume_msgs.md#getcurrentmodel)
+
+*Service call*
+
+```bash
+rosservice call /<namespace>/get_current_velocity_model
+```
+
+Return the parameters for the Gauss-Markov process describing the current velocity magnitude $v_c$.
+
+> **`get_angle_model`**
+
+*Service description file*
+
+[`uuv_plume_msgs/GetCurrentModel`](uuv_plume_msgs.md#getcurrentmodel)
+
+*Service call*
+
+```bash
+rosservice call /<namespace>/get_angle_model 
+```
+
+Return the parameters for the Gauss-Markov process describing the current's horizontal angle $\phi$.
+
+> **`set_current_velocity_model`**
+
+*Service description file*
+
+[`uuv_plume_msgs/SetCurrentModel`](uuv_plume_msgs.md#setcurrentmodel)
+
+*Service call*
+
+```bash
+rosservice call /<namespace>/set_current_velocity_model "{mean: 0.0, min: 0.0, max: 0.0, noise: 0.0, mu: 0.0}" 
+```
+
+Set the parameters for the Gauss-Markov process describing the current velocity magnitude $v_c$.
+
+* `mean`: Mean value in m/s
+* `min` and `max`: Bounds of the output velocity magnitude in m/s
+* `noise`: Amplitude of the random noise value in m/s
+* `mu`: Inverse of the process' time constant
+
+> **`set_angle_model`**
+
+*Service description file*
+
+[`uuv_plume_msgs/SetCurrentModel`](uuv_plume_msgs.md#setcurrentmodel)
+
+*Service call*
+
+```bash
+rosservice call /<namespace>/set_angle_model "{mean: 0.0, min: 0.0, max: 0.0, noise: 0.0, mu: 0.0}" 
+```
+
+Set the parameters for the Gauss-Markov process describing the current's horizontal angle $\phi$.
+
+* `mean`: Mean value in radians
+* `min` and `max`: Bounds of the output angle in radians
+* `noise`: Amplitude of the random noise value in radians
+* `mu`: Inverse of the process' time constant
+
+> **`set_current_velocity`**
+
+*Service description file*
+
+[`uuv_plume_msgs/SetCurrentVelocity`](uuv_plume_msgs.md#setcurrentvelocity)
+
+*Service call*
+
+```bash
+rosservice call /<namespace>/set_current_velocity "velocity: 0.0
+horizontal_angle: 0.0" 
+```
+
+Set a default model for current velocity magnitude $v_c$ and horizontal angle $\phi$.
+
+* `velocity`: Mean current velocity magnitude in m/s
+* `horizontal_angle: Mean horizonal angle in degrees
+
 """
 from __future__ import print_function
 import rospy

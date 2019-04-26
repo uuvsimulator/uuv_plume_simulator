@@ -78,9 +78,9 @@ class CPCSensor
     protected: double smoothingLength;
 
     /// \brief Salinity unit to be used. Options are
-    ///  - PPT (parts per thousand)
-    ///  - PPM (parts per million)
-    ///  - PSU (practical salinity unit)
+    /// * `ppt` (parts per thousand)
+    /// * `ppm` (parts per million)
+    /// * `psu` (practical salinity unit)
     protected: std::string salinityUnit;
 
     /// \brief Sensor saturation

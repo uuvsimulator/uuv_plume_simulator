@@ -3,7 +3,7 @@
 
   <group if="$(arg use_gazebo)">
     <!-- Initialize the Gazebo world  -->
-    <include file="$(find uuv_descriptions)/launch/ocean_waves.launch">
+    <include file="$(find uuv_gazebo_worlds)/launch/ocean_waves.launch">
       <arg name="gui" value="false"/>
     </include>
   </group>
